@@ -11,15 +11,13 @@ import android.util.Log;
 
 import java.io.File;
 
-import dragonfly.butterfly.Character;
 import dragonfly.butterfly.ButterflyHelper;
-import dragonfly.butterfly.ImmutableLinkedList;
 import dragonfly.butterfly.Schema;
 
 
 public class DatabaseManager {
     public static SQLiteDatabase openDatabase(Context context, Schema schema) {
-        String databaseFileSystemPath = context.getExternalCacheDir().getAbsolutePath() + "/" + context.getApplicationInfo().name + ".db";
+        String databaseFileSystemPath = context.getDatabasePath(context.getApplicationInfo().name + ".db").getAbsolutePath();
         SQLiteDatabase.CursorFactory cursorFactory = new SQLiteDatabase.CursorFactory() {
             @Override
             public Cursor newCursor(SQLiteDatabase db, SQLiteCursorDriver masterQuery, String editTable, SQLiteQuery query) {
@@ -33,10 +31,10 @@ public class DatabaseManager {
             sqLiteDatabase.close();
             SQLiteDatabase.deleteDatabase(new File(databaseFileSystemPath));
             sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(databaseFileSystemPath, cursorFactory);
-            ImmutableLinkedList<ImmutableLinkedList<Character>> sqlStatements = ButterflyHelper.generateDatabaseSql(schema);
+            String[] sqlStatements = ButterflyHelper.generateDatabaseSql(schema);
             try {
-                for(int sqlStatementIndex = 0; sqlStatementIndex < sqlStatements.length(); sqlStatementIndex++) {
-                    sqLiteDatabase.execSQL(Character.toString(sqlStatements.get(sqlStatementIndex).value().getValues(true)));
+                for(int sqlStatementIndex = 0; sqlStatementIndex < sqlStatements.length; sqlStatementIndex++) {
+                    sqLiteDatabase.execSQL(sqlStatements[sqlStatementIndex]);
                 }
             } catch (SQLException e) {
                 Log.e(DatabaseManager.class.getName(), e.toString());
