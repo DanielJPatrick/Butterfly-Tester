@@ -19,12 +19,9 @@ public class MainActivity extends Activity {
                new Table("ReferenceLocation")
                         .addColumn("Id", "INTEGER", false)
                         .addColumn("Name", "TEXT", true)
-                        .addForeignKey("Specie", "Name")
                         .addColumn("Latitude", "DOUBLE", "0")
                         .addColumn("Longitude", "DOUBLE", "0")
-                        .addForeignKey("Specie", "IconName")
                         .addPrimaryKey("Id")
-                        .addUnique("Latitude")
                         .addUnique("Name")
                         .addCheck("Latitude > -1")
                         .addCheck("Longitude > -1"),
@@ -37,6 +34,8 @@ public class MainActivity extends Activity {
 
                 new Table("Subspecie")
                         .addColumn("Id", "INTEGER")
+                        .addColumn("SpecieId", "INTEGER")
+                        .addForeignKey("Specie", "Id")
                         .addPrimaryKey("Id"),
 
                 new Table("Animal")
